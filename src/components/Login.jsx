@@ -5,14 +5,15 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { PawPrint, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { PawPrint, Mail, Lock, User, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
 /**
  * Login component
  * Props:
  *  - onLogin: function({ id, email, role: 'buyer'|'seller'|'admin', isNewUser })
+ *  - onBack: function() -> called when user clicks Back to return to Landing
  */
-export default function Login({ onLogin }) {
+export default function Login({ onLogin, onBack }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({
     email: '',
@@ -27,45 +28,61 @@ export default function Login({ onLogin }) {
   });
   const [isLoading, setIsLoading] = useState(false);
 
+  // validation state for name
+  const [nameError, setNameError] = useState('');
+
+  const LOCAL_USER_KEY = 'petconnect_user'; // unified key used across app
+
+  /* ----------------------
+     Login
+     ---------------------- */
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
+    // Simulate API call latency
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Mock login - check if admin
+    // Determine role (demo)
     const isAdmin = loginData.email === 'admin@petconnect.com';
     const role = isAdmin ? 'admin' : 'buyer';
 
-    onLogin({
-      id: '1',
-      email: loginData.email,
-      role,
-      isNewUser: false
-    });
-
-    setIsLoading(false);
-  };
-
-  const handleRegisterSubmit = async (e) => {
-    e.preventDefault();
-
-    if (registerData.password !== registerData.confirmPassword) {
-      alert('Passwords do not match');
-      return;
+    // Try to find stored user in localStorage
+    let storedUser = null;
+    try {
+      const raw = localStorage.getItem(LOCAL_USER_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // use it only if same email
+        if (parsed && parsed.email === loginData.email) storedUser = parsed;
+      }
+    } catch (err) {
+      storedUser = null;
     }
 
-    setIsLoading(true);
+    // If no stored user, create a lightweight one from email (no phone)
+    if (!storedUser) {
+      const derivedName = (loginData.email && loginData.email.split('@')[0]) || 'User';
+      storedUser = {
+        id: Date.now().toString(),
+        name: derivedName,
+        email: loginData.email,
+        phone: '', // phone unknown until profile setup
+        role
+      };
+      try {
+        localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(storedUser));
+      } catch (err) {
+        console.warn('Could not save user to localStorage', err);
+      }
+    }
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
+    // Notify parent
     onLogin({
-      id: '2',
-      email: registerData.email,
-      role: registerData.userType,
-      isNewUser: true
+      id: storedUser.id || '1',
+      email: storedUser.email,
+      role,
+      isNewUser: false
     });
 
     setIsLoading(false);
@@ -75,13 +92,98 @@ export default function Login({ onLogin }) {
     setLoginData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  /* ----------------------
+     Register
+     ---------------------- */
+
+  // live validation while typing: only letters and spaces for name
   const handleRegisterChange = (e) => {
-    setRegisterData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+
+    if (name === 'name') {
+      // allow empty while typing, but block numbers/special chars
+      if (value === '' || /^[A-Za-z\s]*$/.test(value)) {
+        setRegisterData(prev => ({ ...prev, name: value }));
+        setNameError('');
+      } else {
+        // do not update value with invalid char; show message
+        setNameError('Only letters and spaces allowed.');
+      }
+      return;
+    }
+
+    // other fields
+    setRegisterData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+
+    // final check: name must be valid & not empty
+    const nameTrimmed = registerData.name.trim();
+    if (!/^[A-Za-z\s]+$/.test(nameTrimmed)) {
+      setNameError('Name can contain only letters and spaces.');
+      return;
+    }
+
+    if (registerData.password !== registerData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Simulate API call latency
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Build user object to persist locally (no phone at signup)
+    const newUser = {
+      id: Date.now().toString(),
+      name: nameTrimmed,
+      email: registerData.email,
+      phone: '', // intentionally empty — moved to ProfileSetup
+      role: registerData.userType
+    };
+
+    try {
+      localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(newUser));
+    } catch (err) {
+      console.warn('Could not save user to localStorage', err);
+    }
+
+    onLogin({
+      id: newUser.id,
+      email: newUser.email,
+      role: newUser.role,
+      isNewUser: true
+    });
+
+    setIsLoading(false);
+  };
+
+  // helper: is sign-up valid (disable submit if name error or name empty)
+  const isSignUpDisabled = () => {
+    if (isLoading) return true;
+    if (!registerData.name.trim()) return true;
+    if (nameError) return true;
+    // other required fields: email/password/confirm
+    if (!registerData.email || !registerData.password || !registerData.confirmPassword) return true;
+    return false;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-pink-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md hover:bg-pink-100">
+        {/* Back Button (extracted) */}
+        <Button
+          variant="ghost"
+          onClick={onBack}
+          className="mb-6  "
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-3 mb-4">
@@ -93,7 +195,7 @@ export default function Login({ onLogin }) {
           <p className="text-gray-600">Connect pets with loving families</p>
         </div>
 
-        <Card className="p-8 rounded-2xl border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+        <Card className="p-8 rounded-2xl border-0 shadow-lg bg-gray-50 backdrop-blur-sm">
           <Tabs defaultValue="login" className="space-y-6">
             <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-xl p-1">
               <TabsTrigger value="login" className="rounded-lg">Sign In</TabsTrigger>
@@ -195,6 +297,7 @@ export default function Login({ onLogin }) {
                       placeholder="Enter your full name"
                     />
                   </div>
+                  {nameError && <p className="text-sm text-red-600 mt-1">{nameError}</p>}
                 </div>
 
                 <div>
@@ -213,8 +316,6 @@ export default function Login({ onLogin }) {
                     />
                   </div>
                 </div>
-
-                
 
                 <div>
                   <Label htmlFor="register-password">Password</Label>
@@ -252,7 +353,7 @@ export default function Login({ onLogin }) {
 
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isSignUpDisabled()}
                   className="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl h-12"
                 >
                   {isLoading ? (
@@ -273,12 +374,7 @@ export default function Login({ onLogin }) {
   );
 }
 
-/* PropTypes mirror for the original TypeScript props */
 Login.propTypes = {
-  onLogin: PropTypes.func.isRequired
+  onLogin: PropTypes.func.isRequired,
+  onBack: PropTypes.func.isRequired
 };
-
-Login.defaultProps = {
-  // no default for onLogin — it's required
-};
-

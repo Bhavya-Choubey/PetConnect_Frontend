@@ -96,28 +96,37 @@ export default function HistoryPage({ onBack, viewHistory, onPetSelect }) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center p-3 bg-blue-50 rounded-lg">
                 <div className="text-2xl font-bold text-blue-600">{viewedPets.length}</div>
                 <div className="text-sm text-gray-600">Pets Viewed</div>
               </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
+
+              <div className="text-center p-3 bg-green-50 rounded-lg">
                 <div className="text-2xl font-bold text-green-600">
-                  {viewedPets.filter(pet => pet && (pet.breed.toLowerCase().includes('dog') || pet.breed.toLowerCase().includes('retriever') || pet.breed.toLowerCase().includes('collie') || pet.breed.toLowerCase().includes('inu') || pet.breed.toLowerCase().includes('beagle'))).length}
+                  {viewedPets.filter(
+                    (pet) =>
+                      pet &&
+                      (pet.breed.toLowerCase().includes('dog') ||
+                        pet.breed.toLowerCase().includes('retriever') ||
+                        pet.breed.toLowerCase().includes('collie') ||
+                        pet.breed.toLowerCase().includes('inu') ||
+                        pet.breed.toLowerCase().includes('beagle'))
+                  ).length}
                 </div>
                 <div className="text-sm text-gray-600">Dogs</div>
               </div>
+
               <div className="text-center p-4 bg-purple-50 rounded-lg">
                 <div className="text-2xl font-bold text-purple-600">
-                  {viewedPets.filter(pet => pet && pet.breed.toLowerCase().includes('cat')).length}
+                  {viewedPets.filter(
+                    (pet) => pet && pet.breed.toLowerCase().includes('cat')
+                  ).length}
                 </div>
                 <div className="text-sm text-gray-600">Cats</div>
               </div>
-              <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <div className="text-2xl font-bold text-orange-600">7</div>
-                <div className="text-sm text-gray-600">Days Active</div>
-              </div>
             </div>
+
           </CardContent>
         </Card>
 

@@ -57,7 +57,7 @@ export default function ContactPage({ onBack }) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-gray-600">
-                  PetConnect is dedicated to bringing together loving pets and caring families. 
+                  PetConnect is dedicated to bringing together loving pets and caring families.
                   Our platform makes pet adoption simple, safe, and joyful.
                 </p>
                 <div className="grid grid-cols-2 gap-4 pt-4">
@@ -91,27 +91,27 @@ export default function ContactPage({ onBack }) {
                     <div className="text-sm text-gray-600">support@petconnect.com</div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-3">
                   <div className="bg-green-100 p-2 rounded-lg">
                     <Phone className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
                     <div className="font-medium">Phone</div>
-                    <div className="text-sm text-gray-600">1-800-PET-LOVE</div>
+                    <div className="text-sm text-gray-600">+91 999999999</div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-3">
                   <div className="bg-purple-100 p-2 rounded-lg">
                     <MapPin className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
                     <div className="font-medium">Address</div>
-                    <div className="text-sm text-gray-600">123 Pet Street, Animal City, AC 12345</div>
+                    <div className="text-sm text-gray-600">Bangalore</div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-3">
                   <div className="bg-orange-100 p-2 rounded-lg">
                     <Clock className="h-5 w-5 text-orange-600" />
@@ -124,26 +124,6 @@ export default function ContactPage({ onBack }) {
               </CardContent>
             </Card>
 
-            {/* Quick Help */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle>Quick Help</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full justify-start">
-                  <Users className="h-4 w-4 mr-2" />
-                  Adoption Process Guide
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Safety & Trust
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  FAQ
-                </Button>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Contact Form */}
@@ -232,35 +212,7 @@ export default function ContactPage({ onBack }) {
               </CardContent>
             </Card>
 
-            {/* Team Info */}
-            <Card className="mt-8 border-0 shadow-lg bg-gradient-to-r from-green-50 to-blue-50">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Meet Our Team</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Users className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <div className="font-medium">Support Team</div>
-                    <div className="text-sm text-gray-600">Pet adoption experts</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Shield className="h-8 w-8 text-green-600" />
-                    </div>
-                    <div className="font-medium">Safety Team</div>
-                    <div className="text-sm text-gray-600">Ensuring secure adoptions</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Heart className="h-8 w-8 text-purple-600" />
-                    </div>
-                    <div className="font-medium">Care Team</div>
-                    <div className="text-sm text-gray-600">Animal welfare advocates</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            
           </div>
         </div>
       </div>

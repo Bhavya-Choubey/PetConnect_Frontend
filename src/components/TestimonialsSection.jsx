@@ -131,7 +131,7 @@ export default function TestimonialsSection() {
               <div>
                 <h3 className="text-2xl font-bold mb-4">About PetConnect</h3>
                 <p className="text-green-50 mb-6 leading-relaxed">
-                  Founded in 2020, PetConnect was born from a simple belief: every pet deserves a loving home, 
+                  Founded in 2025, PetConnect was born from a simple belief: every pet deserves a loving home, 
                   and every family deserves the perfect companion. We've created a safe, trusted platform that 
                   connects responsible pet owners with caring families.
                 </p>

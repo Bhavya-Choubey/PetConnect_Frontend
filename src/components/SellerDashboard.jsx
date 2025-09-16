@@ -72,12 +72,10 @@ const MAX_FILE_BYTES = 2 * 1024 * 1024; // 2 MB
 
 // keywords for species detection in filenames (heuristic)
 const speciesKeywords = {
-  dog: ['dog', 'doggy', 'puppy', 'canine', 'retriever', 'beagle', 'labrador', 'pup'],
-  cat: ['cat', 'kitten', 'feline', 'persian', 'siamese', 'tabby'],
-  rabbit: ['rabbit', 'bunny', 'hare'],
-  bird: ['bird', 'parrot', 'cockatiel', 'budgie'],
-  rodent: ['hamster', 'rat', 'mouse', 'guinea', 'gerbil'],
-  other: [] // allow anything for 'other' (but will still forbid filenames that match other explicit species if you want)
+  DOG: ['dog', 'doggy', 'puppy', 'canine', 'retriever', 'beagle', 'labrador', 'pup'],
+  CAT: ['cat', 'kitten', 'feline', 'persian', 'siamese', 'tabby'],
+  BIRD: ['bird', 'parrot', 'cockatiel', 'budgie'],
+  OTHER: [] // allow anything for 'other' (but will still forbid filenames that match other explicit species if you want)
 };
 
 // helper: returns true if filename contains any keyword from the list
@@ -269,8 +267,8 @@ export default function SellerDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* Stats Cards (3 cards) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="p-6 rounded-2xl border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100">
             <div className="flex items-center justify-between">
               <div>
@@ -312,21 +310,8 @@ export default function SellerDashboard() {
               </div>
             </div>
           </Card>
-
-          <Card className="p-6 rounded-2xl border-0 shadow-sm bg-gradient-to-br from-purple-50 to-purple-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-purple-600 font-medium">Total Views</p>
-                <p className="text-2xl font-bold text-purple-800">
-                  {mockListings.reduce((sum, pet) => sum + pet.views, 0)}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
-                <User className="h-6 w-6 text-white" />
-              </div>
-            </div>
-          </Card>
         </div>
+
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -373,24 +358,23 @@ export default function SellerDashboard() {
                         </div>
                         <Badge
                           variant={pet.status === 'available' ? 'default' : 'secondary'}
-                          className={`${
-                            pet.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                          } border-0`}
+                          className={`${pet.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                            } border-0`}
                         >
                           {pet.status === 'available' ? 'Available' : 'Adopted'}
                         </Badge>
                       </div>
 
                       <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                        <span>{pet.views} views</span>
+
                         <span>{pet.inquiries} inquiries</span>
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-1">
+                        {/* <div className="flex items-center space-x-1">
                           <Switch checked={pet.status === 'available'} onCheckedChange={() => togglePetStatus(pet.id, pet.status)} />
                           <span className="text-sm text-gray-600">Available</span>
-                        </div>
+                        </div> */}
 
                         <div className="flex space-x-2">
                           <Button variant="ghost" size="sm" className="rounded-lg">
@@ -515,12 +499,10 @@ export default function SellerDashboard() {
                         <SelectValue placeholder="Select species" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="dog">Dog</SelectItem>
-                        <SelectItem value="cat">Cat</SelectItem>
-                        <SelectItem value="rabbit">Rabbit</SelectItem>
-                        <SelectItem value="bird">Bird</SelectItem>
-                        <SelectItem value="rodent">Rodent</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="DOG">Dog</SelectItem>
+                        <SelectItem value="CAT">Cat</SelectItem>
+                        <SelectItem value="BIRD">Bird</SelectItem>
+                        <SelectItem value="OTHER">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -531,9 +513,21 @@ export default function SellerDashboard() {
                   </div>
 
                   <div>
-                    <Label htmlFor="age">Age *</Label>
-                    <Input id="age" name="age" value={newPet.age} onChange={handleInputChange} required className="mt-1 rounded-xl" placeholder="e.g., 2 years, 6 months" />
+                    <Label htmlFor="age">Age (In months)*</Label>
+                    <Input
+                      id="age"
+                      name="age"
+                      type="number"
+                      value={newPet.age}
+                      onChange={handleInputChange}
+                      required
+                      className="mt-1 rounded-xl"
+                      placeholder="In months"
+                      min={0}
+                      step={1}
+                    />
                   </div>
+
 
                   <div>
                     <Label>Gender *</Label>
@@ -547,6 +541,20 @@ export default function SellerDashboard() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <div>
+                    <Label htmlFor="location">Location *</Label>
+                    <Input
+                      id="location"
+                      name="location"
+                      value={newPet.location || ''}
+                      onChange={handleInputChange}
+                      required
+                      className="mt-1 rounded-xl"
+                      placeholder="Enter pet's location"
+                    />
+                  </div>
+
                 </div>
 
                 {/* Health Information */}
@@ -561,13 +569,7 @@ export default function SellerDashboard() {
                       <Switch checked={newPet.vaccinated} onCheckedChange={handleSwitchChange('vaccinated')} />
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label>Registered</Label>
-                        <p className="text-sm text-gray-600">Pet is registered with official kennel club</p>
-                      </div>
-                      <Switch checked={newPet.registered} onCheckedChange={handleSwitchChange('registered')} />
-                    </div>
+
                   </div>
                 </div>
 

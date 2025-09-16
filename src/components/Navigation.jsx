@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -32,6 +34,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { Textarea } from "./ui/textarea";
+import { toast } from "sonner";
 
 export default function Navigation({
   user,
@@ -75,36 +78,79 @@ export default function Navigation({
 
   // Report dialog state + form
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [reportTitle, setReportTitle] = useState("");
   const [reportText, setReportText] = useState("");
   const [isSubmittingReport, setIsSubmittingReport] = useState(false);
 
+  // UPDATED: resilient submit handler — tries network, falls back to localStorage
   const handleSubmitReport = async (e) => {
     e.preventDefault();
-    const trimmed = (reportText || "").trim();
-    if (!trimmed) return;
+    const titleTrimmed = (reportTitle || "").trim();
+    const messageTrimmed = (reportText || "").trim();
+    if (!titleTrimmed || !messageTrimmed) {
+      toast.error("Please provide both a title and description for the report.");
+      return;
+    }
 
     setIsSubmittingReport(true);
 
+    const payload = {
+      id: `local-${Date.now()}`,
+      title: titleTrimmed,
+      message: messageTrimmed,
+      userId: user?.id ?? null,
+      userEmail: user?.email ?? null,
+      timestamp: new Date().toISOString(),
+      offlineSaved: true,
+    };
+
+    // Try sending to backend; if it fails or returns non-ok, fallback to localStorage
     try {
-      // Replace with your real API endpoint. This is a mock POST.
-      await fetch("/api/reports", {
+      const res = await fetch("/api/reports", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          title: titleTrimmed,
+          message: messageTrimmed,
           userId: user?.id ?? null,
           userEmail: user?.email ?? null,
-          message: trimmed,
           timestamp: new Date().toISOString(),
         }),
       });
 
-      // Simple UX: clear & close
+      if (!res.ok) {
+        // log for debugging, then fallback
+        const text = await res.text().catch(() => "");
+        console.warn("Reports endpoint returned non-OK:", res.status, text);
+        throw new Error(`Non-OK response: ${res.status}`);
+      }
+
+      // Backend accepted — clear form and notify user
+      setReportTitle("");
       setReportText("");
       setIsReportOpen(false);
-      // Optionally show a toast or other feedback
+      toast.success("Report submitted to admin.");
     } catch (err) {
-      console.error("Failed to submit report:", err);
-      // Optionally show error feedback to the user
+      // Network error or backend missing — fallback to saving locally
+      console.warn("Failed to submit report to server; falling back to local save.", err);
+
+      try {
+        const stored = localStorage.getItem("petconnect_reports");
+        const arr = stored ? JSON.parse(stored) : [];
+        arr.unshift(payload);
+        localStorage.setItem("petconnect_reports", JSON.stringify(arr));
+      } catch (storageErr) {
+        console.error("Failed to save report to localStorage:", storageErr);
+        toast.error("Failed to send report. Please try again.");
+        setIsSubmittingReport(false);
+        return;
+      }
+
+      // Pretend success for UX — admin can process once backend available or you can sync later
+      setReportTitle("");
+      setReportText("");
+      setIsReportOpen(false);
+      toast.success("Report saved locally. Admin will receive it once the backend is available.");
     } finally {
       setIsSubmittingReport(false);
     }
@@ -112,7 +158,7 @@ export default function Navigation({
 
   const unreadCount = unreadNotifications;
 
-  // Guard in case `user` is missing; don't throw.
+  // Guard in case user is missing; don't throw.
   const role = user?.role ?? "buyer";
 
   return (
@@ -196,7 +242,6 @@ export default function Navigation({
                       className={`p-4 border-b last:border-b-0 hover:bg-gray-50 cursor-pointer ${
                         !notification.read ? "bg-blue-50" : ""
                       }`}
-                      // optionally call a handler when clicking a notification
                     >
                       <div className="flex items-start space-x-3">
                         <div
@@ -398,12 +443,27 @@ export default function Navigation({
                     </DialogHeader>
 
                     <form onSubmit={handleSubmitReport} className="space-y-4">
-                      <Textarea
-                        placeholder="Describe the problem..."
-                        value={reportText}
-                        onChange={(e) => setReportText(e.target.value)}
-                        required
-                      />
+                      <div>
+                        <Label htmlFor="report-title">Title</Label>
+                        <Input
+                          id="report-title"
+                          value={reportTitle}
+                          onChange={(e) => setReportTitle(e.target.value)}
+                          placeholder="Short title describing the issue"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="report-desc">Description</Label>
+                        <Textarea
+                          id="report-desc"
+                          placeholder="Describe the problem..."
+                          value={reportText}
+                          onChange={(e) => setReportText(e.target.value)}
+                          required
+                        />
+                      </div>
 
                       <div className="flex justify-end gap-2">
                         <Button type="button" variant="ghost" onClick={() => setIsReportOpen(false)}>

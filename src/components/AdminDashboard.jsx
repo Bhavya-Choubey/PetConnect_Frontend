@@ -7,18 +7,16 @@ import { Badge } from './ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
   CartesianGrid,
+  LineChart,
+  Line,
   Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
-  LineChart,
-  Line,
+  XAxis,
+  YAxis,
 } from 'recharts';
 import { Users, PawPrint, AlertTriangle, TrendingUp, Search, Shield, X, Eye, Ban } from 'lucide-react';
 
@@ -120,6 +118,11 @@ export default function AdminDashboard() {
       pet.seller.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // derive counts from mock data (replace with real API values)
+  const totalUsersCount = mockUsers.length + 1242; // keep existing display ~1245 (mock + sample)
+  const totalPetsCount = mockPets.length + 385; // ~387
+  const pendingReportsCount = 6; // example pending reports count
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -133,13 +136,13 @@ export default function AdminDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* Overview Stats - now with 3 cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="p-6 rounded-2xl border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-blue-600 font-medium">Total Users</p>
-                <p className="text-2xl font-bold text-blue-800">1,245</p>
+                <p className="text-2xl font-bold text-blue-800">{totalUsersCount.toLocaleString()}</p>
                 <div className="flex items-center mt-2">
                   <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
                   <span className="text-sm text-green-600">+12% this month</span>
@@ -154,8 +157,8 @@ export default function AdminDashboard() {
           <Card className="p-6 rounded-2xl border-0 shadow-sm bg-gradient-to-br from-green-50 to-green-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-600 font-medium">Active Listings</p>
-                <p className="text-2xl font-bold text-green-800">387</p>
+                <p className="text-sm text-green-600 font-medium">Total Pets</p>
+                <p className="text-2xl font-bold text-green-800">{totalPetsCount.toLocaleString()}</p>
                 <div className="flex items-center mt-2">
                   <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
                   <span className="text-sm text-green-600">+8% this month</span>
@@ -170,31 +173,15 @@ export default function AdminDashboard() {
           <Card className="p-6 rounded-2xl border-0 shadow-sm bg-gradient-to-br from-orange-50 to-orange-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-orange-600 font-medium">Flagged Content</p>
-                <p className="text-2xl font-bold text-orange-800">12</p>
+                <p className="text-sm text-orange-600 font-medium">Pending Reports</p>
+                <p className="text-2xl font-bold text-orange-800">{pendingReportsCount}</p>
                 <div className="flex items-center mt-2">
                   <AlertTriangle className="h-4 w-4 text-orange-600 mr-1" />
-                  <span className="text-sm text-orange-600">Needs attention</span>
+                  <span className="text-sm text-orange-600">Needs review</span>
                 </div>
               </div>
               <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
                 <AlertTriangle className="h-6 w-6 text-white" />
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-6 rounded-2xl border-0 shadow-sm bg-gradient-to-br from-purple-50 to-purple-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-purple-600 font-medium">Monthly Revenue</p>
-                <p className="text-2xl font-bold text-purple-800">$12.5K</p>
-                <div className="flex items-center mt-2">
-                  <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
-                  <span className="text-sm text-green-600">+18% this month</span>
-                </div>
-              </div>
-              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-white" />
               </div>
             </div>
           </Card>
@@ -261,7 +248,6 @@ export default function AdminDashboard() {
                 </div>
               </Card>
             </div>
-
           </TabsContent>
 
           {/* Users Tab */}
@@ -279,7 +265,6 @@ export default function AdminDashboard() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>User</TableHead>
-                    <TableHead>Type</TableHead>
                     <TableHead>Join Date</TableHead>
                     <TableHead>Listings</TableHead>
                     <TableHead>Status</TableHead>
@@ -295,11 +280,6 @@ export default function AdminDashboard() {
                           <p className="font-medium text-gray-800">{user.name}</p>
                           <p className="text-sm text-gray-500">{user.email}</p>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={user.type === 'seller' ? 'default' : 'secondary'} className={`${user.type === 'seller' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'} border-0`}>
-                          {user.type}
-                        </Badge>
                       </TableCell>
                       <TableCell>{new Date(user.joinDate).toLocaleDateString()}</TableCell>
                       <TableCell>{user.listings}</TableCell>
@@ -349,9 +329,8 @@ export default function AdminDashboard() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Pet</TableHead>
-                    <TableHead>Seller</TableHead>
+                    <TableHead>Owner</TableHead>
                     <TableHead>Posted Date</TableHead>
-                    <TableHead>Status</TableHead>
                     <TableHead>Reports</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -367,14 +346,6 @@ export default function AdminDashboard() {
                       </TableCell>
                       <TableCell>{pet.seller}</TableCell>
                       <TableCell>{new Date(pet.datePosted).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={pet.status === 'active' ? 'default' : 'destructive'}
-                          className={`${pet.status === 'active' ? 'bg-green-100 text-green-800' : pet.status === 'flagged' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'} border-0`}
-                        >
-                          {pet.status}
-                        </Badge>
-                      </TableCell>
                       <TableCell>{pet.reports > 0 ? <Badge className="bg-orange-100 text-orange-800 border-0">{pet.reports}</Badge> : <span className="text-gray-500">0</span>}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">

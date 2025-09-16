@@ -163,15 +163,15 @@ export default function Homepage({ onPetSelect, wishlistedPets, onToggleWishlist
     // fixed precedence with parentheses
     const matchesType =
       selectedType === 'all' ||
-      (selectedType === 'dog' && (
+      (selectedType === 'DOG' && (
         pet.breed.toLowerCase().includes('retriever') ||
         pet.breed.toLowerCase().includes('beagle') ||
         pet.breed.toLowerCase().includes('husky') ||
         pet.breed.toLowerCase().includes('shiba') ||
         pet.breed.toLowerCase().includes('collie') // added collie so collies count as dogs
       )) ||
-      (selectedType === 'cat' && pet.breed.toLowerCase().includes('cat')) ||
-      (selectedType === 'rabbit' && pet.breed.toLowerCase().includes('rabbit'));
+      (selectedType === 'CAT' && pet.breed.toLowerCase().includes('CAT')) ||
+      (selectedType === 'BIRD' && pet.breed.toLowerCase().includes('BIRD'));
 
     const matchesVaccinated = !vaccinatedOnly || pet.vaccinated;
     
@@ -211,10 +211,11 @@ export default function Homepage({ onPetSelect, wishlistedPets, onToggleWishlist
                     <SelectValue placeholder="Pet Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="dog">Dogs</SelectItem>
-                    <SelectItem value="cat">Cats</SelectItem>
-                    <SelectItem value="rabbit">Rabbits</SelectItem>
+                     <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="DOG">Dogs</SelectItem>
+                    <SelectItem value="CAT">Cats</SelectItem>
+                    <SelectItem value="BIRD">Birds</SelectItem>
+                    <SelectItem value="OTHER">Others</SelectItem>
                   </SelectContent>
                 </Select>
                 
@@ -224,9 +225,9 @@ export default function Homepage({ onPetSelect, wishlistedPets, onToggleWishlist
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Ages</SelectItem>
-                    <SelectItem value="young">Young (&lt; 1 year)</SelectItem>
-                    <SelectItem value="adult">Adult (1-5 years)</SelectItem>
-                    <SelectItem value="senior">Senior (&gt; 5 years)</SelectItem>
+                    <SelectItem value="young">Young (&lt; 12 months)</SelectItem>
+                    <SelectItem value="adult">Adult (12-40 months)</SelectItem>
+                    <SelectItem value="senior">Senior (&gt; 40 months)</SelectItem>
                   </SelectContent>
                 </Select>
                 
@@ -324,7 +325,7 @@ export default function Homepage({ onPetSelect, wishlistedPets, onToggleWishlist
       <TestimonialsSection />
       
       {/* Footer */}
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

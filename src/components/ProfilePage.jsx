@@ -5,42 +5,48 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Badge } from './ui/badge';
 import { Textarea } from './ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { ArrowLeft, Camera, MapPin, Phone, Mail, Calendar, User } from 'lucide-react';
 
 export default function ProfilePage({ user, onBack }) {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user.name || '',
-    phone: '+1 (555) 123-4567',
+    phone: '9876543210',
     location: 'New York, NY',
-    bio: 'Pet lover and enthusiast looking for the perfect furry companion.',
-    experience: 'First-time pet owner',
-    preferences: 'Dogs, Cats'
+    bio: 'Pet lover and enthusiast looking for the perfect furry companion.'
   });
+
+  // Restrict input for name and phone
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    if (id === 'phone') {
+      // Only digits
+      const cleaned = value.replace(/\D/g, '');
+      setFormData((prev) => ({ ...prev, phone: cleaned }));
+    } else if (id === 'name') {
+      // Only letters and spaces
+      const cleaned = value.replace(/[^a-zA-Z\s]/g, '');
+      setFormData((prev) => ({ ...prev, name: cleaned }));
+    } else {
+      setFormData((prev) => ({ ...prev, [id]: value }));
+    }
+  };
 
   const handleSave = () => {
     setIsEditing(false);
-    // Here you would typically update the user data
     console.log('Saving profile data:', formData);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    // Reset form data if needed
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-green-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
-        <Button
-          variant="ghost"
-          onClick={onBack}
-          className="mb-6 hover:bg-white/50"
-        >
+        <Button variant="ghost" onClick={onBack} className="mb-6 hover:bg-white/50">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
@@ -72,13 +78,6 @@ export default function ProfilePage({ user, onBack }) {
                   {formData.name || user.email.split('@')[0]}
                 </h2>
 
-                <Badge
-                  variant="secondary"
-                  className="mb-4 bg-green-100 text-green-800 capitalize"
-                >
-                  {user.role}
-                </Badge>
-
                 <div className="space-y-3 text-left">
                   <div className="flex items-center text-gray-600">
                     <Mail className="h-4 w-4 mr-3" />
@@ -94,7 +93,7 @@ export default function ProfilePage({ user, onBack }) {
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Calendar className="h-4 w-4 mr-3" />
-                    <span className="text-sm">Joined September 2024</span>
+                    <span className="text-sm">Joined September 2025</span>
                   </div>
                 </div>
               </CardContent>
@@ -140,9 +139,10 @@ export default function ProfilePage({ user, onBack }) {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={handleChange}
                       disabled={!isEditing}
                       className="mt-1"
+                      placeholder="Enter your name"
                     />
                   </div>
                   <div>
@@ -150,9 +150,10 @@ export default function ProfilePage({ user, onBack }) {
                     <Input
                       id="phone"
                       value={formData.phone}
-                      onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                      onChange={handleChange}
                       disabled={!isEditing}
                       className="mt-1"
+                      placeholder="Enter your phone number"
                     />
                   </div>
                 </div>
@@ -162,7 +163,7 @@ export default function ProfilePage({ user, onBack }) {
                   <Input
                     id="location"
                     value={formData.location}
-                    onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                    onChange={handleChange}
                     disabled={!isEditing}
                     className="mt-1"
                   />
@@ -173,64 +174,11 @@ export default function ProfilePage({ user, onBack }) {
                   <Textarea
                     id="bio"
                     value={formData.bio}
-                    onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+                    onChange={handleChange}
                     disabled={!isEditing}
                     rows={3}
                     className="mt-1"
                   />
-                </div>
-
-                {user.role === 'buyer' && (
-                  <>
-                    <div>
-                      <Label htmlFor="experience">Pet Experience</Label>
-                      <Select
-                        value={formData.experience}
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, experience: value }))}
-                        disabled={!isEditing}
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="First-time pet owner">First-time pet owner</SelectItem>
-                          <SelectItem value="Some experience">Some experience</SelectItem>
-                          <SelectItem value="Very experienced">Very experienced</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="preferences">Pet Preferences</Label>
-                      <Input
-                        id="preferences"
-                        value={formData.preferences}
-                        onChange={(e) => setFormData(prev => ({ ...prev, preferences: e.target.value }))}
-                        disabled={!isEditing}
-                        placeholder="e.g., Dogs, Cats, Small pets"
-                        className="mt-1"
-                      />
-                    </div>
-                  </>
-                )}
-
-                {/* Account Stats */}
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold mb-4">Account Statistics</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">12</div>
-                      <div className="text-sm text-gray-600">Pets Viewed</div>
-                    </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">5</div>
-                      <div className="text-sm text-gray-600">Favorites</div>
-                    </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <div className="text-2xl font-bold text-purple-600">2</div>
-                      <div className="text-sm text-gray-600">Applications</div>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
             </Card>
