@@ -9,6 +9,7 @@ import { Badge } from './ui/badge';
 import { Switch } from './ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Plus, Upload, Eye, Edit, Trash2, CheckCircle, XCircle, User, MessageSquare } from 'lucide-react';
+import { toast } from 'sonner'; // <-- added
 
 // Mock data
 const mockListings = [
@@ -16,7 +17,7 @@ const mockListings = [
     id: '1',
     name: 'Buddy',
     breed: 'Golden Retriever',
-    age: '2 years',
+    age: '2 months',
     status: 'available',
     image:
       'https://images.unsplash.com/photo-1754499265662-a1b9367c95f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
@@ -28,7 +29,7 @@ const mockListings = [
     id: '2',
     name: 'Princess',
     breed: 'Persian Cat',
-    age: '1.5 years',
+    age: '1.5 months',
     status: 'adopted',
     image:
       'https://images.unsplash.com/photo-1714696217563-7e89bb7bf631?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
@@ -75,7 +76,7 @@ const speciesKeywords = {
   DOG: ['dog', 'doggy', 'puppy', 'canine', 'retriever', 'beagle', 'labrador', 'pup'],
   CAT: ['cat', 'kitten', 'feline', 'persian', 'siamese', 'tabby'],
   BIRD: ['bird', 'parrot', 'cockatiel', 'budgie'],
-  OTHER: [] // allow anything for 'other' (but will still forbid filenames that match other explicit species if you want)
+  OTHER: []
 };
 
 // helper: returns true if filename contains any keyword from the list
@@ -88,10 +89,9 @@ function filenameHasKeyword(filename = '', keywords = []) {
 function filenameIndicatesDifferentSpecies(filename = '', selectedSpecies = '') {
   if (!filename) return false;
   const selected = selectedSpecies ? selectedSpecies.toLowerCase() : '';
-  // build list of keywords for other species
   for (const [species, keywords] of Object.entries(speciesKeywords)) {
     if (!species) continue;
-    if (species === selected) continue; // skip selected species
+    if (species === selected) continue;
     if (filenameHasKeyword(filename, keywords)) {
       return { conflict: true, speciesMatched: species };
     }
@@ -110,7 +110,8 @@ export default function SellerDashboard() {
     species: '',
     description: '',
     vaccinated: false,
-    registered: false
+    registered: false,
+    location: ''
   });
 
   // file state
@@ -123,7 +124,6 @@ export default function SellerDashboard() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewPet((prev) => ({ ...prev, [name]: value }));
-    // clear file error when fields change
     setFileError('');
   };
 
@@ -136,6 +136,13 @@ export default function SellerDashboard() {
     setNewPet((prev) => ({ ...prev, [name]: checked }));
   };
 
+  const getTabClass = (tabValue) => {
+    const base = 'rounded-xl px-4 py-2 font-medium transition-colors duration-150 text-sm cursor-pointer';
+    const hover = 'hover:bg-pink-100 hover:text-pink-600';
+    const active = activeTab === tabValue ? 'bg-pink-100 text-pink-600' : 'text-gray-700';
+    return `${base} ${hover} ${active}`;
+  };
+
   const handleFileClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
@@ -145,14 +152,12 @@ export default function SellerDashboard() {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
 
-    // only one image allowed
     if (e.target.files.length > 1) {
       setFileError('Please upload only one image per listing.');
       e.target.value = '';
       return;
     }
 
-    // size check
     if (file.size > MAX_FILE_BYTES) {
       setFileError('File is too large. Please select an image smaller than 2 MB.');
       setPhotoFile(null);
@@ -161,7 +166,6 @@ export default function SellerDashboard() {
       return;
     }
 
-    // mime type check (image/*)
     if (!file.type.startsWith('image/')) {
       setFileError('Only image files are allowed (png, jpg, gif, etc.).');
       setPhotoFile(null);
@@ -170,7 +174,6 @@ export default function SellerDashboard() {
       return;
     }
 
-    // species-specific filename heuristic: ensure filename doesn't strongly indicate a different species
     if (newPet.species && newPet.species !== 'other') {
       const { conflict, speciesMatched } = filenameIndicatesDifferentSpecies(file.name, newPet.species);
       if (conflict) {
@@ -182,7 +185,6 @@ export default function SellerDashboard() {
       }
     }
 
-    // read preview
     const reader = new FileReader();
     reader.onload = (ev) => {
       setPhotoPreview(ev.target.result || '');
@@ -207,31 +209,34 @@ export default function SellerDashboard() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Basic validation
-    if (!newPet.name || !newPet.breed || !newPet.age || !newPet.gender || !newPet.species) {
-      setFileError('Please complete all required fields and upload a valid image (if applicable).');
+    // Validate required fields
+    if (!newPet.name || !newPet.breed || !newPet.age || !newPet.gender || !newPet.species || !newPet.location) {
+      const msg = 'Please complete all required fields and upload a valid image (if applicable).';
+      setFileError(msg);
+      toast.error(msg);
       return;
     }
 
     if (fileError) {
-      // block submit if file error exists
+      toast.error(fileError);
       return;
     }
 
-    // Build payload (example)
     const payload = new FormData();
     payload.append('name', newPet.name);
     payload.append('breed', newPet.breed);
     payload.append('age', newPet.age);
     payload.append('gender', newPet.gender);
     payload.append('species', newPet.species);
-    payload.append('description', newPet.description);
+    payload.append('description', newPet.description || '');
     payload.append('vaccinated', newPet.vaccinated);
     payload.append('registered', newPet.registered);
     if (photoFile) payload.append('photo', photoFile);
 
     console.log('Posting new pet listing. Keys:', [...payload.keys()]);
-    // TODO: send to server (fetch/axios). For now reset UI:
+
+    // Simulate success (replace with API call)
+    // Reset form
     setNewPet({
       name: '',
       breed: '',
@@ -240,9 +245,15 @@ export default function SellerDashboard() {
       species: '',
       description: '',
       vaccinated: false,
-      registered: false
+      registered: false,
+      location: ''
     });
     removePhoto();
+
+    // show success toast
+    toast.success('Pet added successfully 🎉');
+
+    // switch to listings tab
     setActiveTab('listings');
   };
 
@@ -312,17 +323,16 @@ export default function SellerDashboard() {
           </Card>
         </div>
 
-
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 bg-white rounded-2xl p-1 shadow-sm border-0">
-            <TabsTrigger value="listings" className="rounded-xl">
+            <TabsTrigger value="listings" className={getTabClass('listings')}>
               My Listings
             </TabsTrigger>
-            <TabsTrigger value="requests" className="rounded-xl">
+            <TabsTrigger value="requests" className={getTabClass('requests')}>
               Adoption Requests
             </TabsTrigger>
-            <TabsTrigger value="add" className="rounded-xl">
+            <TabsTrigger value="add" className={getTabClass('add')}>
               Add New Pet
             </TabsTrigger>
           </TabsList>
@@ -358,24 +368,17 @@ export default function SellerDashboard() {
                         </div>
                         <Badge
                           variant={pet.status === 'available' ? 'default' : 'secondary'}
-                          className={`${pet.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                            } border-0`}
+                          className={`${pet.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} border-0`}
                         >
                           {pet.status === 'available' ? 'Available' : 'Adopted'}
                         </Badge>
                       </div>
 
                       <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-
                         <span>{pet.inquiries} inquiries</span>
                       </div>
 
                       <div className="flex items-center justify-between">
-                        {/* <div className="flex items-center space-x-1">
-                          <Switch checked={pet.status === 'available'} onCheckedChange={() => togglePetStatus(pet.id, pet.status)} />
-                          <span className="text-sm text-gray-600">Available</span>
-                        </div> */}
-
                         <div className="flex space-x-2">
                           <Button variant="ghost" size="sm" className="rounded-lg">
                             <Edit className="h-4 w-4" />
@@ -427,10 +430,6 @@ export default function SellerDashboard() {
                     <Button onClick={() => handleRequestAction(request.id, 'reject')} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 rounded-xl">
                       <XCircle className="h-4 w-4 mr-2" />
                       Decline
-                    </Button>
-                    <Button onClick={() => handleRequestAction(request.id, 'pending')} variant="outline" className="border-yellow-200 text-yellow-600 hover:bg-red-50 rounded-xl">
-                      <User className="h-4 w-4 mr-2" />
-                      Mark as Pending
                     </Button>
                   </div>
                 </Card>
@@ -528,7 +527,6 @@ export default function SellerDashboard() {
                     />
                   </div>
 
-
                   <div>
                     <Label>Gender *</Label>
                     <Select value={newPet.gender} onValueChange={(value) => setNewPet((prev) => ({ ...prev, gender: value }))}>
@@ -554,7 +552,6 @@ export default function SellerDashboard() {
                       placeholder="Enter pet's location"
                     />
                   </div>
-
                 </div>
 
                 {/* Health Information */}
@@ -568,8 +565,6 @@ export default function SellerDashboard() {
                       </div>
                       <Switch checked={newPet.vaccinated} onCheckedChange={handleSwitchChange('vaccinated')} />
                     </div>
-
-
                   </div>
                 </div>
 

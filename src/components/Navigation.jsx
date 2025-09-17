@@ -211,80 +211,80 @@ export default function Navigation({
               )}
             </div>
 
-            {/* Notifications */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative rounded-full"
-                  onClick={onNotificationClick}
-                >
-                  <Bell className="h-5 w-5" />
-                  {unreadCount > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-red-500 text-white border-2 border-white">
-                      {unreadCount}
-                    </Badge>
-                  )}
-                </Button>
-              </PopoverTrigger>
-
-              <PopoverContent className="w-80 p-0 rounded-xl" align="end">
-                <div className="p-4 border-b">
-                  <h3 className="font-semibold">Notifications</h3>
-                  <p className="text-sm text-gray-500">{unreadCount} unread messages</p>
-                </div>
-
-                <div className="max-h-80 overflow-y-auto">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-4 border-b last:border-b-0 hover:bg-gray-50 cursor-pointer ${
-                        !notification.read ? "bg-blue-50" : ""
-                      }`}
-                    >
-                      <div className="flex items-start space-x-3">
-                        <div
-                          className={`p-2 rounded-full ${
-                            notification.type === "reply"
-                              ? "bg-blue-100"
-                              : notification.type === "adoption"
-                              ? "bg-green-100"
-                              : "bg-gray-100"
-                          }`}
-                        >
-                          {notification.type === "reply" ? (
-                            <MessageSquare className="h-4 w-4 text-blue-600" />
-                          ) : notification.type === "adoption" ? (
-                            <Heart className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <MessageSquare className="h-4 w-4 text-gray-600" />
-                          )}
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900">
-                            {notification.message}
-                          </p>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <Clock className="h-3 w-3 text-gray-400" />
-                            <p className="text-xs text-gray-500">{notification.time}</p>
-                          </div>
-                        </div>
-
-                        {!notification.read && <div className="w-2 h-2 bg-blue-500 rounded-full" />}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="p-4 border-t">
-                  <Button variant="ghost" className="w-full text-sm" onClick={onNotificationClick}>
-                    View All Notifications
+            {/* Notifications - hidden for admins */}
+            {role !== "admin" && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="relative rounded-full"
+                    onClick={onNotificationClick}
+                  >
+                    <Bell className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                      <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-red-500 text-white border-2 border-white">
+                        {unreadCount}
+                      </Badge>
+                    )}
                   </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverTrigger>
+
+                <PopoverContent className="w-80 p-0 rounded-xl" align="end">
+                  <div className="p-4 border-b">
+                    <h3 className="font-semibold">Notifications</h3>
+                    <p className="text-sm text-gray-500">{unreadCount} unread messages</p>
+                  </div>
+
+                  <div className="max-h-80 overflow-y-auto">
+                    {notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`p-4 border-b last:border-b-0 hover:bg-gray-50 cursor-pointer ${!notification.read ? "bg-blue-50" : ""
+                          }`}
+                      >
+                        <div className="flex items-start space-x-3">
+                          <div
+                            className={`p-2 rounded-full ${notification.type === "reply"
+                                ? "bg-blue-100"
+                                : notification.type === "adoption"
+                                  ? "bg-green-100"
+                                  : "bg-gray-100"
+                              }`}
+                          >
+                            {notification.type === "reply" ? (
+                              <MessageSquare className="h-4 w-4 text-blue-600" />
+                            ) : notification.type === "adoption" ? (
+                              <Heart className="h-4 w-4 text-green-600" />
+                            ) : (
+                              <MessageSquare className="h-4 w-4 text-gray-600" />
+                            )}
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900">
+                              {notification.message}
+                            </p>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <Clock className="h-3 w-3 text-gray-400" />
+                              <p className="text-xs text-gray-500">{notification.time}</p>
+                            </div>
+                          </div>
+
+                          {!notification.read && <div className="w-2 h-2 bg-blue-500 rounded-full" />}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="p-4 border-t">
+                    <Button variant="ghost" className="w-full text-sm" onClick={onNotificationClick}>
+                      View All Notifications
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
 
             {/* Avatar & Sheet */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -299,7 +299,8 @@ export default function Navigation({
                 </Button>
               </SheetTrigger>
 
-              <SheetContent side="right" className="w-80">
+              {/* Make SheetContent a column so we can place logout near the bottom */}
+              <SheetContent side="right" className="w-80 flex flex-col">
                 <SheetHeader className="text-left">
                   <SheetTitle className="flex items-center space-x-2">
                     <PawPrint className="h-6 w-6 text-green-500" />
@@ -308,189 +309,195 @@ export default function Navigation({
                   <SheetDescription>Access your account and app features</SheetDescription>
                 </SheetHeader>
 
-                {/* User Info */}
-                <div className="mt-6 p-4 bg-gray-50 rounded-xl">
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={user?.avatar} alt={user?.name || user?.email} />
-                      <AvatarFallback>
-                        {user?.name ? user.name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() ?? "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold text-gray-900">{user?.name || "User"}</p>
-                      <p className="text-sm text-gray-500">{user?.email}</p>
+                {/* Scrollable main content */}
+                <div className="overflow-y-auto flex-1 px-4 py-4">
+                  {/* User Info */}
+                  <div className="mt-2 p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={user?.avatar} alt={user?.name || user?.email} />
+                        <AvatarFallback>
+                          {user?.name ? user.name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() ?? "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-semibold text-gray-900">{user?.name || "User"}</p>
+                        <p className="text-sm text-gray-500">{user?.email}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Mobile navigation links */}
-                <div className="mt-6 space-y-2 md:hidden">
-                  <h4 className="text-sm font-semibold text-gray-500 px-3 mb-2">Navigation</h4>
+                  {/* Mobile navigation links */}
+                  <div className="mt-6 space-y-2 md:hidden">
+                    <h4 className="text-sm font-semibold text-gray-500 px-3 mb-2">Navigation</h4>
 
-                  {role !== "admin" && (
-                    <>
+                    {role !== "admin" && (
+                      <>
+                        <Button
+                          variant={currentView === "buyer" ? "default" : "ghost"}
+                          onClick={() => {
+                            onViewChange("buyer");
+                            setIsSheetOpen(false);
+                          }}
+                          className="w-full justify-start rounded-xl"
+                        >
+                          <Heart className="h-4 w-4 mr-3" />
+                          Find Pets
+                        </Button>
+
+                        <Button
+                          variant={currentView === "seller" ? "default" : "ghost"}
+                          onClick={() => {
+                            onViewChange("seller");
+                            setIsSheetOpen(false);
+                          }}
+                          className="w-full justify-start rounded-xl"
+                        >
+                          <User className="h-4 w-4 mr-3" />
+                          My Listings
+                        </Button>
+                      </>
+                    )}
+
+                    {role === "admin" && (
                       <Button
-                        variant={currentView === "buyer" ? "default" : "ghost"}
+                        variant={currentView === "admin" ? "default" : "ghost"}
                         onClick={() => {
-                          onViewChange("buyer");
+                          onViewChange("admin");
                           setIsSheetOpen(false);
                         }}
                         className="w-full justify-start rounded-xl"
+                      >
+                        <Settings className="h-4 w-4 mr-3" />
+                        Admin Dashboard
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Account menu (users only) */}
+                  {role !== "admin" && (
+                    <div className="mt-6 space-y-2">
+                      <h4 className="text-sm font-semibold text-gray-500 px-3 mb-2">Account</h4>
+
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          onNavigationClick("profile");
+                          setIsSheetOpen(false);
+                        }}
+                        className="w-full justify-start rounded-xl hover:bg-gray-50"
+                      >
+                        <UserCircle className="h-4 w-4 mr-3" />
+                        View/Edit Profile
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          onNavigationClick("wishlists");
+                          setIsSheetOpen(false);
+                        }}
+                        className="w-full justify-start rounded-xl hover:bg-gray-50"
                       >
                         <Heart className="h-4 w-4 mr-3" />
-                        Find Pets
+                        Wishlists
                       </Button>
 
                       <Button
-                        variant={currentView === "seller" ? "default" : "ghost"}
+                        variant="ghost"
                         onClick={() => {
-                          onViewChange("seller");
+                          onNavigationClick("history");
                           setIsSheetOpen(false);
                         }}
-                        className="w-full justify-start rounded-xl"
+                        className="w-full justify-start rounded-xl hover:bg-gray-50"
                       >
-                        <User className="h-4 w-4 mr-3" />
-                        My Listings
+                        <History className="h-4 w-4 mr-3" />
+                        History
                       </Button>
-                    </>
+
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          onNavigationClick("contact");
+                          setIsSheetOpen(false);
+                        }}
+                        className="w-full justify-start rounded-xl hover:bg-gray-50"
+                      >
+                        <MessageSquare className="h-4 w-4 mr-3" />
+                        Contact Us
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        onClick={() => setIsReportOpen(true)}
+                        className="w-full justify-start rounded-xl hover:bg-gray-50 text-red-600"
+                      >
+                        <Flag className="h-4 w-4 mr-3" />
+                        Report a Problem
+                      </Button>
+                    </div>
                   )}
 
-                  {role === "admin" && (
-                    <Button
-                      variant={currentView === "admin" ? "default" : "ghost"}
-                      onClick={() => {
-                        onViewChange("admin");
-                        setIsSheetOpen(false);
-                      }}
-                      className="w-full justify-start rounded-xl"
-                    >
-                      <Settings className="h-4 w-4 mr-3" />
-                      Admin Dashboard
-                    </Button>
-                  )}
+                  {/* Report Dialog */}
+                  <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Report a Problem</DialogTitle>
+                      </DialogHeader>
+
+                      <form onSubmit={handleSubmitReport} className="space-y-4">
+                        <div>
+                          <Label htmlFor="report-title">Title</Label>
+                          <Input
+                            id="report-title"
+                            value={reportTitle}
+                            onChange={(e) => setReportTitle(e.target.value)}
+                            placeholder="Short title describing the issue"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="report-desc">Description</Label>
+                          <Textarea
+                            id="report-desc"
+                            placeholder="Describe the problem..."
+                            value={reportText}
+                            onChange={(e) => setReportText(e.target.value)}
+                            required
+                          />
+                        </div>
+
+                        <div className="flex justify-end gap-2">
+                          <Button type="button" variant="ghost" onClick={() => setIsReportOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button type="submit" disabled={isSubmittingReport}>
+                            {isSubmittingReport ? "Sending..." : "Send Report"}
+                          </Button>
+                        </div>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </div>
 
-                {/* Account menu (users only) */}
-                {role !== "admin" && (
-                  <div className="mt-6 space-y-2">
-                    <h4 className="text-sm font-semibold text-gray-500 px-3 mb-2">Account</h4>
-
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        onNavigationClick("profile");
-                        setIsSheetOpen(false);
-                      }}
-                      className="w-full justify-start rounded-xl hover:bg-gray-50"
-                    >
-                      <UserCircle className="h-4 w-4 mr-3" />
-                      View/Edit Profile
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        onNavigationClick("wishlists");
-                        setIsSheetOpen(false);
-                      }}
-                      className="w-full justify-start rounded-xl hover:bg-gray-50"
-                    >
-                      <Heart className="h-4 w-4 mr-3" />
-                      Wishlists
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        onNavigationClick("history");
-                        setIsSheetOpen(false);
-                      }}
-                      className="w-full justify-start rounded-xl hover:bg-gray-50"
-                    >
-                      <History className="h-4 w-4 mr-3" />
-                      History
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        onNavigationClick("contact");
-                        setIsSheetOpen(false);
-                      }}
-                      className="w-full justify-start rounded-xl hover:bg-gray-50"
-                    >
-                      <MessageSquare className="h-4 w-4 mr-3" />
-                      Contact Us
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      onClick={() => setIsReportOpen(true)}
-                      className="w-full justify-start rounded-xl hover:bg-gray-50 text-red-600"
-                    >
-                      <Flag className="h-4 w-4 mr-3" />
-                      Report a Problem
-                    </Button>
-                  </div>
-                )}
-
-                {/* Report Dialog */}
-                <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Report a Problem</DialogTitle>
-                    </DialogHeader>
-
-                    <form onSubmit={handleSubmitReport} className="space-y-4">
-                      <div>
-                        <Label htmlFor="report-title">Title</Label>
-                        <Input
-                          id="report-title"
-                          value={reportTitle}
-                          onChange={(e) => setReportTitle(e.target.value)}
-                          placeholder="Short title describing the issue"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="report-desc">Description</Label>
-                        <Textarea
-                          id="report-desc"
-                          placeholder="Describe the problem..."
-                          value={reportText}
-                          onChange={(e) => setReportText(e.target.value)}
-                          required
-                        />
-                      </div>
-
-                      <div className="flex justify-end gap-2">
-                        <Button type="button" variant="ghost" onClick={() => setIsReportOpen(false)}>
-                          Cancel
-                        </Button>
-                        <Button type="submit" disabled={isSubmittingReport}>
-                          {isSubmittingReport ? "Sending..." : "Send Report"}
-                        </Button>
-                      </div>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-
-                {/* Logout */}
-                <div className="mt-8 pt-6 border-t">
+                {/* Footer with Logout near the bottom (not sticky) */}
+                <div className="px-4 border-t pt-4">
                   <Button
                     variant="ghost"
                     onClick={() => {
                       onLogout();
                       setIsSheetOpen(false);
+                       toast.success("Logged out successfully 🐾❤️");
                     }}
                     className="w-full justify-start rounded-xl text-red-600 hover:text-red-600 hover:bg-red-50"
                   >
                     <LogOut className="h-4 w-4 mr-3" />
                     Log out
+
                   </Button>
                 </div>
+                <br />
               </SheetContent>
             </Sheet>
           </div>

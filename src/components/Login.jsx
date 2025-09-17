@@ -6,6 +6,8 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { PawPrint, Mail, Lock, User, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { toast } from "sonner";
+
 
 /**
  * Login component
@@ -38,6 +40,13 @@ export default function Login({ onLogin, onBack }) {
      ---------------------- */
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
+
+    // manual password length check (show toast)
+    if (!loginData.password || loginData.password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
+      return;
+    }
+
     setIsLoading(true);
 
     // Simulate API call latency
@@ -84,6 +93,8 @@ export default function Login({ onLogin, onBack }) {
       role,
       isNewUser: false
     });
+    toast.success("Login successful ❤️");
+
 
     setIsLoading(false);
   };
@@ -126,8 +137,15 @@ export default function Login({ onLogin, onBack }) {
       return;
     }
 
+    // Password length check with toast
+    if (!registerData.password || registerData.password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
+      return;
+    }
+
+    // Password match check -> toast on mismatch
     if (registerData.password !== registerData.confirmPassword) {
-      alert('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
 
@@ -158,6 +176,8 @@ export default function Login({ onLogin, onBack }) {
       isNewUser: true
     });
 
+    
+
     setIsLoading(false);
   };
 
@@ -168,13 +188,15 @@ export default function Login({ onLogin, onBack }) {
     if (nameError) return true;
     // other required fields: email/password/confirm
     if (!registerData.email || !registerData.password || !registerData.confirmPassword) return true;
+    // Ensure minimum length client-side too
+    if (registerData.password.length < 8 || registerData.confirmPassword.length < 8) return true;
     return false;
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md hover:bg-pink-100">
-        {/* Back Button (extracted) */}
+        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={onBack}
@@ -236,6 +258,7 @@ export default function Login({ onLogin, onBack }) {
                       name="password"
                       type={showPassword ? 'text' : 'password'}
                       required
+                      minLength={8}
                       value={loginData.password}
                       onChange={handleLoginChange}
                       className="pl-10 pr-10 rounded-xl"
@@ -326,6 +349,7 @@ export default function Login({ onLogin, onBack }) {
                       name="password"
                       type="password"
                       required
+                      minLength={8}
                       value={registerData.password}
                       onChange={handleRegisterChange}
                       className="pl-10 rounded-xl"
@@ -343,6 +367,7 @@ export default function Login({ onLogin, onBack }) {
                       name="confirmPassword"
                       type="password"
                       required
+                      minLength={8}
                       value={registerData.confirmPassword}
                       onChange={handleRegisterChange}
                       className="pl-10 rounded-xl"

@@ -3,7 +3,6 @@
 import { Toaster as Sonner } from "sonner";
 
 const Toaster = ({ ...props }) => {
-  // Get theme from document class
   const isDarkMode = document.documentElement.classList.contains("dark");
   const theme = isDarkMode ? "dark" : "light";
 

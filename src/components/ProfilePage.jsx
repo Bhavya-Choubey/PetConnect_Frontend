@@ -9,12 +9,14 @@ import { Textarea } from './ui/textarea';
 import { ArrowLeft, Camera, MapPin, Phone, Mail, Calendar, User } from 'lucide-react';
 
 export default function ProfilePage({ user, onBack }) {
+  const safeName = user?.name ?? '';
+  const safeEmail = user?.email ?? '';
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: user.name || '',
-    phone: '9876543210',
-    location: 'New York, NY',
-    bio: 'Pet lover and enthusiast looking for the perfect furry companion.'
+    name: safeName,
+    phone: user?.phone ?? '9876543210',
+    location: user?.location ?? 'New York, NY',
+    bio: user?.bio ?? 'Pet lover and enthusiast looking for the perfect furry companion.'
   });
 
   // Restrict input for name and phone
@@ -36,9 +38,17 @@ export default function ProfilePage({ user, onBack }) {
   const handleSave = () => {
     setIsEditing(false);
     console.log('Saving profile data:', formData);
+    // TODO: persist changes (e.g., localStorage or API)
   };
 
   const handleCancel = () => {
+    // reset edits to original user data
+    setFormData({
+      name: safeName,
+      phone: user?.phone ?? formData.phone,
+      location: user?.location ?? formData.location,
+      bio: user?.bio ?? formData.bio
+    });
     setIsEditing(false);
   };
 
@@ -51,18 +61,23 @@ export default function ProfilePage({ user, onBack }) {
           Back
         </Button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Profile Card */}
+        {/* grid: left column auto-sized, right column flexible */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(220px,320px)_1fr] gap-8">
+          {/* Profile Card (left) */}
           <div className="lg:col-span-1">
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6 text-center">
                 <div className="relative inline-block mb-4">
                   <Avatar className="h-24 w-24">
-                    <AvatarImage src={user.avatar} />
-                    <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-100 to-green-100">
-                      {user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
-                    </AvatarFallback>
+                    {user?.avatar ? (
+                      <AvatarImage src={user.avatar} alt={safeName || safeEmail} />
+                    ) : (
+                      <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-100 to-green-100">
+                        {(safeName && safeName.charAt(0).toUpperCase()) || (safeEmail && safeEmail.charAt(0).toUpperCase()) || 'U'}
+                      </AvatarFallback>
+                    )}
                   </Avatar>
+
                   {isEditing && (
                     <Button
                       size="icon"
@@ -74,22 +89,23 @@ export default function ProfilePage({ user, onBack }) {
                   )}
                 </div>
 
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                  {formData.name || user.email.split('@')[0]}
+                <h2 className="text-2xl font-bold text-gray-800 mb-2 break-words">
+                  {formData.name?.trim() || safeName || (safeEmail ? safeEmail.split('@')[0] : 'User')}
+                  <br/>
                 </h2>
 
                 <div className="space-y-3 text-left">
                   <div className="flex items-center text-gray-600">
                     <Mail className="h-4 w-4 mr-3" />
-                    <span className="text-sm">{user.email}</span>
+                    <span className="text-sm break-all">{safeEmail || '—'}</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Phone className="h-4 w-4 mr-3" />
-                    <span className="text-sm">{formData.phone}</span>
+                    <span className="text-sm">{formData.phone || '—'}</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MapPin className="h-4 w-4 mr-3" />
-                    <span className="text-sm">{formData.location}</span>
+                    <span className="text-sm">{formData.location || '—'}</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Calendar className="h-4 w-4 mr-3" />
@@ -100,7 +116,7 @@ export default function ProfilePage({ user, onBack }) {
             </Card>
           </div>
 
-          {/* Profile Details */}
+          {/* Profile Details (right) */}
           <div className="lg:col-span-2">
             <Card className="border-0 shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -13,6 +13,21 @@ export default function NotificationsPage({
   onMarkAllAsRead,
   userRole
 }) {
+  // If the user is an admin, immediately navigate them back.
+  // This effectively removes the notifications flow for admins.
+  useEffect(() => {
+    if (userRole === 'admin') {
+      // call onBack to send admin away from notifications
+      if (typeof onBack === 'function') {
+        onBack();
+      }
+    }
+  }, [userRole, onBack]);
+
+  // If admin, render nothing (we already triggered onBack).
+  if (userRole === 'admin') return null;
+
+  // --- Non-admin users see the full notifications UI ---
   const unreadCount = notifications.filter(n => !n.read).length;
   const readCount = notifications.filter(n => !!n.read).length;
 
@@ -32,9 +47,9 @@ export default function NotificationsPage({
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-green-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 hover:bg-pink-100">
           <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4 hover:bg-white/50">
+            <Button variant="ghost" onClick={onBack} className="mr-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
@@ -131,7 +146,10 @@ export default function NotificationsPage({
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => onMarkAsRead(notification.id)}
+                              onClick={() => {
+                                onMarkAsRead(notification.id);
+                                toast.success('Marked as read');
+                              }}
                               className="text-blue-600 border-blue-200 hover:bg-blue-50"
                             >
                               <Check className="h-4 w-4 mr-1" />
@@ -172,8 +190,8 @@ NotificationsPage.propTypes = {
   onBack: PropTypes.func.isRequired,
   notifications: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      type: PropTypes.string,
       title: PropTypes.string,
       message: PropTypes.string,
       timestamp: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]).isRequired,

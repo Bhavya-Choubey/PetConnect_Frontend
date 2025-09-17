@@ -13,7 +13,7 @@ const mockPetData = {
     id: '1',
     name: 'Buddy',
     breed: 'Golden Retriever',
-    age: '2 years',
+    age: '2 months',
     gender: 'Male',
     image: 'https://images.unsplash.com/photo-1754499265662-a1b9367c95f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwZ29sZGVuJTIwcmV0cmlldmVyJTIwZG9nfGVufDF8fHx8MTc1NzQxNDk0MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     images: [
@@ -36,7 +36,6 @@ const mockPetData = {
       joinedDate: 'Member since 2022'
     }
   },
-  // ... keep the rest of mockPetData unchanged (2..10)
   '2': {
     id: '2',
     name: 'Whiskers',
@@ -95,7 +94,7 @@ const mockPetData = {
     id: '4',
     name: 'Princess',
     breed: 'Persian Cat',
-    age: '1.5 years',
+    age: '1.5 months',
     gender: 'Female',
     image: 'https://images.unsplash.com/photo-1714696217563-7e89bb7bf631?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwcGVyc2lhbiUyMGNhdCUyMHdoaXRlfGVufDF8fHx8MTc1NzQ5NjgxNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     images: [
@@ -122,7 +121,7 @@ const mockPetData = {
     id: '5',
     name: 'Storm',
     breed: 'Siberian Husky',
-    age: '4 years',
+    age: '4 months',
     gender: 'Male',
     image: 'https://images.unsplash.com/photo-1674643928226-7265547151e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwaHVza3klMjBkb2d8ZW58MXx8fHwxNzU3NDIxNDYxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     images: [
@@ -203,7 +202,7 @@ const mockPetData = {
     id: '8',
     name: 'Mittens',
     breed: 'Maine Coon',
-    age: '2.5 years',
+    age: '2.5 months',
     gender: 'Male',
     image: 'https://images.unsplash.com/photo-1748992341389-fdc5c204ad13?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWluZSUyMGNvb24lMjBjYXQlMjBmbHVmZnl8ZW58MXx8fHwxNzU3NTAwMzY0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     images: [
@@ -230,7 +229,7 @@ const mockPetData = {
     id: '9',
     name: 'Rocky',
     breed: 'German Shepherd',
-    age: '3 years',
+    age: '3 months',
     gender: 'Male',
     image: 'https://images.unsplash.com/photo-1649571069618-99a265749d5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnZXJtYW4lMjBzaGVwaGVyZCUyMGRvZ3xlbnwxfHx8fDE3NTczOTIwODZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     images: [

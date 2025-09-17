@@ -10,12 +10,11 @@ import Footer from './Footer';
 
 // Mock data for pets
 const mockPets = [
-  // ... keep all your mock pets unchanged
   {
     id: '1',
     name: 'Buddy',
     breed: 'Golden Retriever',
-    age: '2 years',
+    age: '2 months',
     image: 'https://images.unsplash.com/photo-1754499265662-a1b9367c95f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwZ29sZGVuJTIwcmV0cmlldmVyJTIwZG9nfGVufDF8fHx8MTc1NzQxNDk0MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'New York, NY',
     vaccinated: true
@@ -42,7 +41,7 @@ const mockPets = [
     id: '4',
     name: 'Princess',
     breed: 'Persian Cat',
-    age: '1.5 years',
+    age: '1.5 months',
     image: 'https://images.unsplash.com/photo-1714696217563-7e89bb7bf631?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwcGVyc2lhbiUyMGNhdCUyMHdoaXRlfGVufDF8fHx8MTc1NzQ5NjgxNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'Miami, FL',
     vaccinated: true
@@ -51,7 +50,7 @@ const mockPets = [
     id: '5',
     name: 'Storm',
     breed: 'Siberian Husky',
-    age: '4 years',
+    age: '4 months',
     image: 'https://images.unsplash.com/photo-1674643928226-7265547151e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwaHVza3klMjBkb2d8ZW58MXx8fHwxNzU3NDIxNDYxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'Seattle, WA',
     vaccinated: true
@@ -69,7 +68,7 @@ const mockPets = [
     id: '7',
     name: 'Luna',
     breed: 'Border Collie',
-    age: '1 year',
+    age: '18 months',
     image: 'https://images.unsplash.com/photo-1730242217397-0921b0f29c70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwYm9yZGVyJTIwY29sbGllJTIwZG9nfGVufDF8fHx8MTc1NzUwMDM2MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'Portland, OR',
     vaccinated: true
@@ -78,7 +77,7 @@ const mockPets = [
     id: '8',
     name: 'Mittens',
     breed: 'Maine Coon',
-    age: '2.5 years',
+    age: '24 months',
     image: 'https://images.unsplash.com/photo-1748992341389-fdc5c204ad13?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWluZSUyMGNvb24lMjBjYXQlMjBmbHVmZnl8ZW58MXx8fHwxNzU3NTAwMzY0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'Boston, MA',
     vaccinated: true
@@ -87,7 +86,7 @@ const mockPets = [
     id: '9',
     name: 'Rocky',
     breed: 'German Shepherd',
-    age: '3 years',
+    age: '13 months',
     image: 'https://images.unsplash.com/photo-1649571069618-99a265749d5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnZXJtYW4lMjBzaGVwaGVyZCUyMGRvZ3xlbnwxfHx8fDE3NTczOTIwODZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'Denver, CO',
     vaccinated: true
@@ -96,7 +95,7 @@ const mockPets = [
     id: '10',
     name: 'Bella',
     breed: 'Labrador Mix',
-    age: '5 months',
+    age: '15 months',
     image: 'https://images.unsplash.com/photo-1740090431148-34e013ff2cda?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsYWJyYWRvciUyMHB1cHB5JTIwY3V0ZXxlbnwxfHx8fDE3NTc0MjExMTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'Phoenix, AZ',
     vaccinated: false
@@ -105,7 +104,7 @@ const mockPets = [
     id: '11',
     name: 'Shadow',
     breed: 'Russian Blue Cat',
-    age: '4 years',
+    age: '9 months',
     image: 'https://images.unsplash.com/photo-1612718908786-de5aeecfab79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxydXNzaWFuJTIwYmx1ZSUyMGNhdHxlbnwxfHx8fDE3NTc1MDAzNzR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'San Diego, CA',
     vaccinated: true
@@ -123,7 +122,7 @@ const mockPets = [
     id: '13',
     name: 'Snowball',
     breed: 'Angora Rabbit',
-    age: '1 year',
+    age: '10 months',
     image: 'https://images.unsplash.com/photo-1534043464124-3be32fe637c9?w=400&h=400&fit=crop',
     location: 'Salt Lake City, UT',
     vaccinated: true
@@ -132,7 +131,7 @@ const mockPets = [
     id: '14',
     name: 'Diesel',
     breed: 'Rottweiler',
-    age: '2 years',
+    age: '2 months',
     image: 'https://images.unsplash.com/photo-1615751072497-5f5169febe17?w=400&h=400&fit=crop',
     location: 'Las Vegas, NV',
     vaccinated: true
@@ -168,7 +167,7 @@ export default function Homepage({ onPetSelect, wishlistedPets, onToggleWishlist
         pet.breed.toLowerCase().includes('beagle') ||
         pet.breed.toLowerCase().includes('husky') ||
         pet.breed.toLowerCase().includes('shiba') ||
-        pet.breed.toLowerCase().includes('collie') // added collie so collies count as dogs
+        pet.breed.toLowerCase().includes('collie') 
       )) ||
       (selectedType === 'CAT' && pet.breed.toLowerCase().includes('CAT')) ||
       (selectedType === 'BIRD' && pet.breed.toLowerCase().includes('BIRD'));
@@ -191,13 +190,13 @@ export default function Homepage({ onPetSelect, wishlistedPets, onToggleWishlist
           </p>
           
           {/* Search Section */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 max-w-4xl mx-auto">
+          <div className="bg-white rounded-xl shadow-lg p-6 max-w-4xl mx-auto">
             <div className="flex flex-col lg:flex-row gap-4 items-end">
               <div className="flex-1">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input
-                    placeholder="Search by name or breed..."
+                    placeholder="Search by name, breed or location"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 h-12 rounded-xl border-gray-200 focus:ring-2 focus:ring-green-500"
@@ -219,17 +218,7 @@ export default function Homepage({ onPetSelect, wishlistedPets, onToggleWishlist
                   </SelectContent>
                 </Select>
                 
-                <Select value={selectedAge} onValueChange={setSelectedAge}>
-                  <SelectTrigger className="w-32 h-12 rounded-xl">
-                    <SelectValue placeholder="Age" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Ages</SelectItem>
-                    <SelectItem value="young">Young (&lt; 12 months)</SelectItem>
-                    <SelectItem value="adult">Adult (12-40 months)</SelectItem>
-                    <SelectItem value="senior">Senior (&gt; 40 months)</SelectItem>
-                  </SelectContent>
-                </Select>
+                
                 
                 <Button 
                   variant={vaccinatedOnly ? "default" : "outline"}
@@ -323,9 +312,6 @@ export default function Homepage({ onPetSelect, wishlistedPets, onToggleWishlist
       
       {/* Testimonials and About Section */}
       <TestimonialsSection />
-      
-      {/* Footer */}
-      {/* <Footer /> */}
     </div>
   );
 }

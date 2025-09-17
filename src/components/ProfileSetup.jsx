@@ -7,6 +7,7 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { PawPrint, Upload, MapPin, Phone, User } from 'lucide-react';
+import { toast } from 'sonner'; 
 
 const MAX_FILE_BYTES = 2 * 1024 * 1024; // 2 MB
 
@@ -17,12 +18,7 @@ export default function ProfileSetup({ userRole, onComplete }) {
     avatar: '', // data URL for preview
     phone: '',
     location: '',
-    city: '',
-    state: '',
-    bio: '',
-    experience: '',
-    housing: '',
-    preferences: ''
+    bio: ''
   });
   const [avatarFile, setAvatarFile] = useState(null);
   const [fileError, setFileError] = useState('');
@@ -120,9 +116,16 @@ export default function ProfileSetup({ userRole, onComplete }) {
         updatedAt: new Date().toISOString()
       };
       localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(toStore));
-    } catch (err) {}
+    } catch (err) {
+      // ignore storage errors
+    }
 
     setIsLoading(false);
+
+    // Show success toast BEFORE navigating away / calling parent handler
+    toast.success("Account created — Welcome! 🤟");
+
+    // notify parent to continue (e.g., navigate to app)
     onComplete();
   };
 
@@ -207,12 +210,15 @@ export default function ProfileSetup({ userRole, onComplete }) {
                       name="phone"
                       type="tel"
                       inputMode="numeric"
-                      pattern="\d*"
+                      pattern="\d{10,}"    
+                      minLength={10}     
+                      maxLength={10}       
                       value={formData.phone}
                       onChange={handleInputChange}
                       onPaste={handlePhonePaste}
                       className="pl-10 rounded-xl"
                       placeholder="9876543210"
+                      required
                     />
                   </div>
                 </div>
@@ -255,9 +261,6 @@ export default function ProfileSetup({ userRole, onComplete }) {
 
             {/* Submit */}
             <div className="flex justify-end space-x-4 pt-6">
-              <Button type="button" variant="outline" onClick={onComplete} className="rounded-xl">
-                Skip for now
-              </Button>
               <Button type="submit" disabled={isLoading || !!fileError} className="bg-green-500 hover:bg-green-600 text-white rounded-xl px-8">
                 {isLoading ? 'Saving...' : 'Complete Profile'}
               </Button>

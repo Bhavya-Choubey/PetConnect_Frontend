@@ -40,7 +40,6 @@
   --sidebar-border: #e2e8f0;
   --sidebar-ring: oklch(0.708 0 0);
   
-  /* Pet platform specific colors */
   --pastel-blue: #a7d8ea;
   --pastel-green: #98f5b4;
   --warm-orange: #ffcc80;
@@ -136,9 +135,6 @@
   }
 }
 
-/**
- * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
- */
 @layer base {
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
     h1 {

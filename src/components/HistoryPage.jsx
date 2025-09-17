@@ -7,12 +7,11 @@ import { ArrowLeft, Clock, Eye, Trash2, Calendar } from 'lucide-react';
 
 // Mock pets data - in a real app this would come from your data source
 const mockPets = [
-  // ... (keep your mock data objects the same)
   {
     id: '1',
     name: 'Buddy',
     breed: 'Golden Retriever',
-    age: '2 years',
+    age: '12 months',
     image: 'https://images.unsplash.com/photo-1754499265662-a1b9367c95f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwZ29sZGVuJTIwcmV0cmlldmVyJTIwZG9nfGVufDF8fHx8MTc1NzQxNDk0MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'New York, NY',
     vaccinated: true

@@ -84,15 +84,41 @@ const chartData = [
 ];
 
 const petTypeData = [
-  { name: 'Dogs', value: 45, color: '#22c55e' },
-  { name: 'Cats', value: 30, color: '#3b82f6' },
-  { name: 'Rabbits', value: 15, color: '#f59e0b' },
-  { name: 'Others', value: 10, color: '#ef4444' },
+  { name: 'DOG', value: 45, color: '#22c55e' },
+  { name: 'CAT', value: 30, color: '#3b82f6' },
+  { name: 'BIRD', value: 15, color: '#f59e0b' },
+  { name: 'OTHER', value: 10, color: '#ef4444' },
 ];
 
 export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Reports state (so we can remove when marked done)
+  const [reports, setReports] = useState([
+    {
+      id: 1,
+      type: 'Inappropriate pet listing',
+      description: 'Pet "Max" reported for misleading information',
+      time: '2 hours ago',
+      color: 'red',
+    },
+    {
+      id: 2,
+      type: 'Spam user account',
+      description: 'User "mike.w@email.com" reported for spam',
+      time: '1 day ago',
+      color: 'yellow',
+    },
+  ]);
+
+  // helper to compute classes for each tab trigger — pink on hover and pink when active (no white text)
+  const getTabClass = (tabValue) => {
+    const base = 'rounded-xl px-4 py-2 font-medium transition-colors duration-150';
+    const hover = 'hover:bg-pink-100 hover:text-pink-600'; // light pink bg, pink text on hover
+    const active = activeTab === tabValue ? 'bg-pink-100 text-pink-600' : 'text-gray-700';
+    return `${base} ${hover} ${active}`;
+  };
 
   // Handlers (JS — no TS annotations)
   const handleUserAction = (userId, action) => {
@@ -103,6 +129,10 @@ export default function AdminDashboard() {
   const handlePetAction = (petId, action) => {
     // TODO: wire to real API
     console.log(`${action} pet ${petId}`);
+  };
+
+  const handleMarkDone = (id) => {
+    setReports((prev) => prev.filter((r) => r.id !== id));
   };
 
   const filteredUsers = mockUsers.filter(
@@ -121,7 +151,7 @@ export default function AdminDashboard() {
   // derive counts from mock data (replace with real API values)
   const totalUsersCount = mockUsers.length + 1242; // keep existing display ~1245 (mock + sample)
   const totalPetsCount = mockPets.length + 385; // ~387
-  const pendingReportsCount = 6; // example pending reports count
+  const pendingReportsCount = reports.length; // now linked to reports state
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -190,16 +220,16 @@ export default function AdminDashboard() {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4 bg-white rounded-2xl p-1 shadow-sm border-0">
-            <TabsTrigger value="overview" className="rounded-xl">
+            <TabsTrigger value="overview" className={getTabClass('overview')}>
               Overview
             </TabsTrigger>
-            <TabsTrigger value="users" className="rounded-xl">
+            <TabsTrigger value="users" className={getTabClass('users')}>
               Users
             </TabsTrigger>
-            <TabsTrigger value="pets" className="rounded-xl">
+            <TabsTrigger value="pets" className={getTabClass('pets')}>
               Pet Listings
             </TabsTrigger>
-            <TabsTrigger value="reports" className="rounded-xl">
+            <TabsTrigger value="reports" className={getTabClass('reports')}>
               Reports
             </TabsTrigger>
           </TabsList>
@@ -373,55 +403,38 @@ export default function AdminDashboard() {
           <TabsContent value="reports" className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-800">Reported Content</h2>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="p-6 rounded-2xl border-0 shadow-sm">
+            <div className="w-full">
+              <Card className="p-6 rounded-2xl border-0 shadow-sm w-full">
                 <h3 className="font-semibold text-gray-800 mb-4">Recent Reports</h3>
                 <div className="space-y-4">
-                  <div className="flex items-start space-x-3 p-3 bg-red-50 rounded-xl">
-                    <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-800">Inappropriate pet listing</p>
-                      <p className="text-sm text-gray-600">Pet "Max" reported for misleading information</p>
-                      <p className="text-xs text-gray-500 mt-1">2 hours ago</p>
-                    </div>
-                    <Button variant="ghost" size="sm" className="rounded-lg">
-                      Review
-                    </Button>
-                  </div>
-
-                  <div className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-xl">
-                    <AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5" />
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-800">Spam user account</p>
-                      <p className="text-sm text-gray-600">User "mike.w@email.com" reported for spam</p>
-                      <p className="text-xs text-gray-500 mt-1">1 day ago</p>
-                    </div>
-                    <Button variant="ghost" size="sm" className="rounded-lg">
-                      Review
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6 rounded-2xl border-0 shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-4">Report Statistics</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total Reports</span>
-                    <span className="font-semibold">24</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Resolved This Week</span>
-                    <span className="font-semibold text-green-600">18</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Pending Review</span>
-                    <span className="font-semibold text-orange-600">6</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Average Response Time</span>
-                    <span className="font-semibold">4.2 hours</span>
-                  </div>
+                  {reports.length === 0 ? (
+                    <p className="text-gray-500 text-sm">No pending reports 🎉</p>
+                  ) : (
+                    reports.map((report) => (
+                      <div
+                        key={report.id}
+                        className={`flex items-start space-x-3 p-3 rounded-xl ${report.color === 'red' ? 'bg-red-50' : 'bg-yellow-50'
+                          }`}
+                      >
+                        <AlertTriangle
+                          className={`h-5 w-5 ${report.color === 'red' ? 'text-red-500' : 'text-yellow-500'} mt-0.5`}
+                        />
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-800">{report.type}</p>
+                          <p className="text-sm text-gray-600">{report.description}</p>
+                          <p className="text-xs text-gray-500 mt-1">{report.time}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleMarkDone(report.id)}
+                          className="rounded-lg bg-pink-100 text-pink-600 hover:bg-pink-200"
+                        >
+                          Mark as Done
+                        </Button>
+                      </div>
+                    ))
+                  )}
                 </div>
               </Card>
             </div>

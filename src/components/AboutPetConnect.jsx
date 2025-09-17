@@ -6,7 +6,7 @@ export default function AboutPetConnect({ onBack }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-pink-50 p-6 flex items-center justify-center">
       <div className="max-w-5xl w-full">
-        {/* Back button (optional) */}
+        {/* Back button */}
         {onBack && (
           <button
             onClick={onBack}

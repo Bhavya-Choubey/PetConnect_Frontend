@@ -13,7 +13,7 @@ export default function Landing({ onGetStarted }) {
     {
       icon: <Users className="w-6 h-6 text-green-500" />,
       title: "Connect with Care", 
-      description: "Connect directly with pet owners and adoption centers."
+      description: "Easily connect with pet owners to find your perfect match."
     },
     {
       icon: <Shield className="w-6 h-6 text-green-500" />,
@@ -22,9 +22,6 @@ export default function Landing({ onGetStarted }) {
     }
   ];
 
-
-
-  
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-green-100 to-pink-100 py-16 flex flex-col">
 
@@ -71,7 +68,7 @@ export default function Landing({ onGetStarted }) {
         </div>
       </div>
 
-      {/* Features Section (kept original design, added bottom spacing) */}
+      {/* Features Section */}
       <div className="py-16 bg-white/50 mt-auto mb-8 md:mb-12 lg:mb-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-8">
@@ -99,3 +96,4 @@ export default function Landing({ onGetStarted }) {
     </div>
   );
 }
+

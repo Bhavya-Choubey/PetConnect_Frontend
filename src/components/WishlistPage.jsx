@@ -11,7 +11,7 @@ const mockPets = [
     id: '1',
     name: 'Buddy',
     breed: 'Golden Retriever',
-    age: '2 years',
+    age: '2 months',
     image: 'https://images.unsplash.com/photo-1754499265662-a1b9367c95f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwZ29sZGVuJTIwcmV0cmlldmVyJTIwZG9nfGVufDF8fHx8MTc1NzQxNDk0MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'New York, NY',
     vaccinated: true
@@ -29,7 +29,7 @@ const mockPets = [
     id: '4',
     name: 'Princess',
     breed: 'Persian Cat',
-    age: '1.5 years',
+    age: '1.5 months',
     image: 'https://images.unsplash.com/photo-1714696217563-7e89bb7bf631?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwcGVyc2lhbiUyMGNhdCUyMHdoaXRlfGVufDF8fHx8MTc1NzQ5NjgxNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     location: 'Miami, FL',
     vaccinated: true
